@@ -5,6 +5,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { NotFoundScreen } from './screens/NotFoundScreen'
 import { View, Text } from 'react-native' // to be deleted
 import { NavigationContainer } from '@react-navigation/native'
+import { AddAppointmentScreen } from './screens/AddAppointmentScreen'
 
 export const Navigation = () => (
     <NavigationContainer>
@@ -14,7 +15,7 @@ export const Navigation = () => (
 
 const Stack = createNativeStackNavigator()
 
-const todoScreen = () => <View><Text>TODO</Text></View>
+const todoScreen = () => <View><Text>TODO</Text></View> // to be deleted
 
 const RootNavigator = () => {
   return (
@@ -35,7 +36,6 @@ const BottomTabNavigator = () => {
     <BottomTab.Navigator
       initialRouteName='Appointments'
       screenOptions={{
-        // tabBarActiveTintColor: Colors[colorScheme].tint,
         tabBarShowLabel: false
       }}
     >
@@ -49,7 +49,7 @@ const BottomTabNavigator = () => {
       />
       <BottomTab.Screen
         name='Add'
-        component={todoScreen}
+        component={AddAppointmentScreen}
         options={{
           title: 'Add New Appointment',
           tabBarIcon: ({ color }) => <TabBarIcon name="plus" color={color} />,
