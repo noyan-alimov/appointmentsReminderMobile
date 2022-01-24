@@ -7,6 +7,7 @@ import { View, Text } from 'react-native' // to be deleted
 import { NavigationContainer } from '@react-navigation/native'
 import { AddAppointmentScreen } from './screens/AddAppointmentScreen'
 import { AppointmentsScreen } from './screens/AppointmentsScreen'
+import { ProfileScreen } from './screens/ProfileScreen'
 
 export const Navigation = () => (
     <NavigationContainer>
@@ -59,9 +60,9 @@ const BottomTabNavigator = () => {
       />
       <BottomTab.Screen
         name='Profile'
-        component={todoScreen}
+        component={ProfileScreen}
         options={{
-          title: 'Profile',
+          title: 'My Profile',
           tabBarIcon: ({ color }) => <TabBarIcon name="user" color={color} />,
         }}
       />
