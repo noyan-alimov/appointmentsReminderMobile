@@ -21,4 +21,5 @@ export interface User {
 }
 
 // When to remind about the appointment (before 30 minutes, etc...)
-export type ReminderPeriod = '30mins' | '1hour' | '1day'
+export type ReminderPeriod = 'thirtyMins' | 'oneHour' | 'oneDay'
+export const allAvailableRemindPeriods: ReminderPeriod[] = ['thirtyMins', 'oneHour', 'oneDay']

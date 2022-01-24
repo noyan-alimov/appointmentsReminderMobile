@@ -8,6 +8,7 @@ import { NavigationContainer } from '@react-navigation/native'
 import { AddAppointmentScreen } from './screens/AddAppointmentScreen'
 import { AppointmentsScreen } from './screens/AppointmentsScreen'
 import { ProfileScreen } from './screens/ProfileScreen'
+import { AppointmentScreen } from './screens/AppointmentScreen'
 
 export const Navigation = () => (
     <NavigationContainer>
@@ -25,7 +26,7 @@ const RootNavigator = () => {
       <Stack.Screen name="Root" component={BottomTabNavigator} options={{ headerShown: false }} />
       <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ title: 'Oops!' }} />
       <Stack.Group>
-        <Stack.Screen name='Appointment' component={todoScreen} />
+        <Stack.Screen name='Appointment' component={AppointmentScreen} />
       </Stack.Group>
     </Stack.Navigator>
   )

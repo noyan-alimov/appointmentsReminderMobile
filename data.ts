@@ -18,8 +18,8 @@ export const appointments: Appointment[] = [
             name: 'John',
             phone_number: '+7 778 921 0640'
         },
-        requestor_reminder_periods: ['1day'],
-        invitee_reminder_periods: ['30mins', '1hour']
+        requestor_reminder_periods: ['oneDay'],
+        invitee_reminder_periods: ['thirtyMins', 'oneHour']
     },
     {
         id: 2,
@@ -38,8 +38,8 @@ export const appointments: Appointment[] = [
             name: 'John',
             phone_number: '+7 778 921 0640'
         },
-        requestor_reminder_periods: ['1day'],
-        invitee_reminder_periods: ['30mins']
+        requestor_reminder_periods: ['oneDay'],
+        invitee_reminder_periods: ['thirtyMins']
     },
     {
         id: 3,
@@ -58,8 +58,8 @@ export const appointments: Appointment[] = [
             name: 'John',
             phone_number: '+7 778 921 0640'
         },
-        requestor_reminder_periods: ['1day'],
-        invitee_reminder_periods: ['30mins']
+        requestor_reminder_periods: ['oneDay'],
+        invitee_reminder_periods: ['thirtyMins']
     },
     {
         id: 4,
@@ -78,7 +78,7 @@ export const appointments: Appointment[] = [
             name: 'John',
             phone_number: '+7 778 921 0640'
         },
-        requestor_reminder_periods: ['1day'],
-        invitee_reminder_periods: ['30mins']
+        requestor_reminder_periods: ['oneDay'],
+        invitee_reminder_periods: ['thirtyMins']
     }
 ]

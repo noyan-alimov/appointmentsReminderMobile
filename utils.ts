@@ -1,4 +1,4 @@
-import { DateModel } from './models'
+import { DateModel, ReminderPeriod, allAvailableRemindPeriods } from './models'
 
 export const parseDate = (date: Date) => ({
     dayOfMonth: date.getDate(),
@@ -29,4 +29,18 @@ export const showDate = (date: DateModel): string => {
 const formatDate = (time: number): string => {
     if (time < 10) return `0${time}`
     return time.toString()
+}
+
+export const parseRemindPeriods = (remindPeriods: ReminderPeriod[]): any => {
+    const obj = {}
+
+    for (const remindPeriod of allAvailableRemindPeriods) {
+        obj[remindPeriod] = false
+    }
+
+    for (const remindPeriod of remindPeriods) {
+        obj[remindPeriod] = true
+    }
+
+    return obj
 }
