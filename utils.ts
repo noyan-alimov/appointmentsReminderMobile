@@ -19,3 +19,14 @@ export const getTodaysDateModel = (): DateModel => {
         month: today.getMonth()
     }
 }
+
+export const showDate = (date: DateModel): string => {
+    const { dayOfMonth, month, hour, minute } = date
+
+    return `${formatDate(dayOfMonth)}/${formatDate(month)}/2022 ${formatDate(hour)}:${formatDate(minute)}`
+}
+
+const formatDate = (time: number): string => {
+    if (time < 10) return `0${time}`
+    return time.toString()
+}

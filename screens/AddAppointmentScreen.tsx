@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { TextInput, View, Text, Switch, ScrollView, Button, Alert } from 'react-native'
+import { TextInput, View, Text, Switch, ScrollView, Alert, Pressable } from 'react-native'
 import tw from 'twrnc'
 import DateTimePicker from '@react-native-community/datetimepicker'
 import { getTodaysDateModel, parseDate, parseTime } from '../utils'
@@ -37,55 +37,56 @@ export const AddAppointmentScreen = () => {
 
     return (
         <ScrollView>
-            <View style={tw`items-center pt-6`}>
-                <View style={tw`mb-10 w-5/6`}>
+            <View style={tw`items-center pt-6 bg-green-50`}>
+                <View style={tw`mb-10 w-11/12`}>
                     <TextInput
-                        style={tw`border-b border-gray-400 p-2`}
+                        style={tw`border-b border-gray-400 p-2 text-base`}
                         placeholder='Appointment Name (dentist, business meeting)'
                         value={name}
                         onChangeText={text => setName(text)}
                     />
                 </View>
 
-                <View style={tw`mb-10 w-5/6`}>
-                    <Text style={tw`text-center mb-4`}>Invitee (person with whom appointment)</Text>
+                <View style={tw`mb-10 w-11/12`}>
+                    <Text style={tw`text-center mb-4 text-base`}>Invitee (person with whom appointment)</Text>
                     <TextInput
-                        style={tw`border-b border-gray-400 p-2`}
+                        style={tw`border-b border-gray-400 p-2 text-base`}
                         placeholder='Name'
                         value={inviteeName}
                         onChangeText={text => setInviteeName(text)}
                     />
                     <TextInput
-                        style={tw`border-b border-gray-400 p-2`}
+                        style={tw`border-b border-gray-400 p-2 text-base`}
                         placeholder='Phone number'
                         value={inviteePhoneNumber}
                         onChangeText={text => setInviteePhoneNumber(text)}
                     />
                 </View>
 
-                <View style={tw`h-32 w-1/2 mb-10`}>
-                    <Text style={tw`text-center`}>Date of appointment</Text>
+                <View style={tw`h-32 w-1/2 mb-6`}>
+                    <Text style={tw`text-center text-base`}>Date of appointment</Text>
                     <CustomDateTimePicker dateModel={dateModel} onChange={dateModel => setDateModel(dateModel)} />
                 </View>
 
-                <View style={tw`mb-10 w-5/6 items-center`}>
-                    <Text style={tw`text-center`}>Remind invitee before</Text>
+                <View style={tw`mb-10 w-11/12 items-center`}>
+                    <View style={tw`h-1 w-full border-b border-gray-300 my-4`}></View>
+                    <Text style={tw`text-center text-base`}>Remind invitee before</Text>
                     <View style={tw`flex-row items-center justify-between w-1/2 mt-4`}>
-                        <Text>30 minutes</Text>
+                        <Text style={tw`text-base`}>30 minutes</Text>
                         <Switch
                             value={add30mins}
                             onValueChange={setAdd30mins}
                         />
                     </View>
                     <View style={tw`flex-row items-center justify-between w-1/2 my-4`}>
-                        <Text>1 hour</Text>
+                        <Text style={tw`text-base`}>1 hour</Text>
                         <Switch
                             value={add1hour}
                             onValueChange={setAdd1hour}
                         />
                     </View>
                     <View style={tw`flex-row items-center justify-between w-1/2`}>
-                        <Text>1 day</Text>
+                        <Text style={tw`text-base`}>1 day</Text>
                         <Switch
                             value={add1day}
                             onValueChange={setAdd1day}
@@ -93,10 +94,10 @@ export const AddAppointmentScreen = () => {
                     </View>
                 </View>
 
-                <View style={tw`mb-10 w-5/6 items-center`}>
-                    <Text style={tw`text-center`}>Remind myself before</Text>
+                <View style={tw`mb-10 w-11/12 items-center`}>
+                    <Text style={tw`text-center text-base`}>Remind myself before</Text>
                     <View style={tw`flex-row items-center justify-between w-1/2 mt-4`}>
-                        <Text>Same as invitee</Text>
+                        <Text style={tw`text-base`}>Same as invitee</Text>
                         <Switch
                             value={sameAsInvitee}
                             onValueChange={setSameAsInvitee}
@@ -104,21 +105,21 @@ export const AddAppointmentScreen = () => {
                     </View>
                     <View style={tw`h-1 w-full border-b border-gray-300 my-4`}></View>
                     <View style={tw`flex-row items-center justify-between w-1/2`}>
-                        <Text>30 minutes</Text>
+                        <Text style={tw`text-base`}>30 minutes</Text>
                         <Switch
                             value={add30minsRequestor}
                             onValueChange={setAdd30minsRequestor}
                         />
                     </View>
                     <View style={tw`flex-row items-center justify-between w-1/2 my-4`}>
-                        <Text>1 hour</Text>
+                        <Text style={tw`text-base`}>1 hour</Text>
                         <Switch
                             value={add1hourRequestor}
                             onValueChange={setAdd1hourRequestor}
                         />
                     </View>
                     <View style={tw`flex-row items-center justify-between w-1/2`}>
-                        <Text>1 day</Text>
+                        <Text style={tw`text-base`}>1 day</Text>
                         <Switch
                             value={add1dayRequestor}
                             onValueChange={setAdd1dayRequestor}
@@ -126,11 +127,10 @@ export const AddAppointmentScreen = () => {
                     </View>
                 </View>
 
-                <View style={tw`mb-10`}>
-                    <Button
-                        title='Add'
-                        onPress={addAppointment}
-                    />
+                <View style={tw`mb-10 w-full items-center`}>
+                    <Pressable style={tw`bg-black py-4 w-1/2 rounded-md`} onPress={addAppointment}>
+                        <Text style={tw`text-white font-bold text-xl text-center`}>Add</Text>
+                    </Pressable>
                 </View>
             </View>
         </ScrollView>

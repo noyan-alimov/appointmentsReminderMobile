@@ -6,6 +6,7 @@ import { NotFoundScreen } from './screens/NotFoundScreen'
 import { View, Text } from 'react-native' // to be deleted
 import { NavigationContainer } from '@react-navigation/native'
 import { AddAppointmentScreen } from './screens/AddAppointmentScreen'
+import { AppointmentsScreen } from './screens/AppointmentsScreen'
 
 export const Navigation = () => (
     <NavigationContainer>
@@ -36,12 +37,13 @@ const BottomTabNavigator = () => {
     <BottomTab.Navigator
       initialRouteName='Appointments'
       screenOptions={{
-        tabBarShowLabel: false
+        tabBarShowLabel: false,
+        tabBarActiveTintColor: 'black'
       }}
     >
       <BottomTab.Screen
         name='Appointments'
-        component={todoScreen}
+        component={AppointmentsScreen}
         options={{
           title: 'Appointments',
           tabBarIcon: ({ color }) => <TabBarIcon name="file" color={color} />,
