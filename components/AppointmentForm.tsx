@@ -11,10 +11,11 @@ import { supabase } from '../supabaseClient'
 import { observer } from 'mobx-react-lite'
 
 interface props {
+    navigation: any
     initialValues?: Appointment
 }
 
-export const AppointmentForm = observer(({ initialValues }: props) => {
+export const AppointmentForm = observer(({ navigation, initialValues }: props) => {
     const [name, setName] = useState(initialValues?.name || '')
     const [inviteeName, setInviteeName] = useState(initialValues?.invitee?.name || '')
     const [inviteePhoneNumber, setInviteePhoneNumber] = useState(initialValues?.invitee.phoneNumber || '')
@@ -24,15 +25,15 @@ export const AppointmentForm = observer(({ initialValues }: props) => {
     const requestorRemindPeriods = parseRemindPeriods(initialValues?.requestor_reminder_periods || [])
 
     // remindPeriods invitee
-    const [add30mins, setAdd30mins] = useState(inviteeRemindPeriods?.thirtyMins || false)
-    const [add1hour, setAdd1hour] = useState(inviteeRemindPeriods?.oneHour || false)
-    const [add1day, setAdd1day] = useState(inviteeRemindPeriods?.oneDay || false)
+    const [add30mins, setAdd30mins] = useState<boolean>(inviteeRemindPeriods?.thirtyMins || false)
+    const [add1hour, setAdd1hour] = useState<boolean>(inviteeRemindPeriods?.oneHour || false)
+    const [add1day, setAdd1day] = useState<boolean>(inviteeRemindPeriods?.oneDay || false)
     // remindPeriods requestor
-    const [add30minsRequestor, setAdd30minsRequestor] = useState(requestorRemindPeriods?.thirtyMins || false)
-    const [add1hourRequestor, setAdd1hourRequestor] = useState(requestorRemindPeriods?.oneHour || false)
-    const [add1dayRequestor, setAdd1dayRequestor] = useState(requestorRemindPeriods?.oneDay || false)
+    const [add30minsRequestor, setAdd30minsRequestor] = useState<boolean>(requestorRemindPeriods?.thirtyMins || false)
+    const [add1hourRequestor, setAdd1hourRequestor] = useState<boolean>(requestorRemindPeriods?.oneHour || false)
+    const [add1dayRequestor, setAdd1dayRequestor] = useState<boolean>(requestorRemindPeriods?.oneDay || false)
 
-    const [sameAsInvitee, setSameAsInvitee] = useState(false)
+    const [sameAsInvitee, setSameAsInvitee] = useState<boolean>(false)
 
     useEffect(() => {
         if (sameAsInvitee) {
@@ -42,7 +43,29 @@ export const AppointmentForm = observer(({ initialValues }: props) => {
         }
     }, [sameAsInvitee])
 
-    const handleAppointmentPress = () => {
+    const navigate = () => {
+        if (initialValues) {
+            navigation.goBack()
+        } else {
+            navigation.navigate('Appointments')
+        }
+    }
+
+    const resetForm = () => {
+        setName('')
+        setInviteeName('')
+        setInviteePhoneNumber('')
+        setDateModel(getTodaysDateModel())
+        setAdd30mins(false)
+        setAdd1hour(false)
+        setAdd1day(false)
+        setAdd30minsRequestor(false)
+        setAdd1hourRequestor(false)
+        setAdd1dayRequestor(false)
+        setSameAsInvitee(false)
+    }
+
+    const handleAppointmentPress = async () => {
         const user = supabase.auth.user()
         if (!user) {
             authStore.setSession(null)
@@ -53,20 +76,36 @@ export const AppointmentForm = observer(({ initialValues }: props) => {
             user_id: user.id,
             name,
             date: JSON.stringify(dateModel),
-            requestor: JSON.stringify(user.user_metadata),
             invitee: JSON.stringify({ name: inviteeName, phoneNumber: inviteePhoneNumber }),
-            requestor_reminder_periods: generateRemindPeriods({ add30mins, add1hour, add1day }),
-            invitee_reminder_periods: generateRemindPeriods({ add30mins: add30minsRequestor, add1hour: add1hourRequestor, add1day: add1dayRequestor })
+            invitee_reminder_periods: generateRemindPeriods({ add30mins, add1hour, add1day }),
+            requestor: JSON.stringify(user.user_metadata),
+            requestor_reminder_periods: generateRemindPeriods({ add30mins: add30minsRequestor, add1hour: add1hourRequestor, add1day: add1dayRequestor })
         }
 
         if (initialValues) {
-            appointmentStore.updateAppointment({
-                ...appointment,
-                id: initialValues.id
-            })
+            await appointmentStore.updateAppointment(initialValues.id, appointment)
         } else {
-            appointmentStore.createAppointment(appointment)
+            await appointmentStore.createAppointment(appointment)
+            resetForm()
         }
+        navigate()
+    }
+
+    const handleDelete = async () => {
+        if (!initialValues) return
+        await appointmentStore.deleteAppointment(initialValues.id)
+        navigate()
+    }
+
+    const renderDeleteButton = () => {
+        if (appointmentStore.isDeleteAppointmentLoading) return <ActivityIndicator size={'large'} style={tw`mt-10`} />
+        return (
+            <Pressable style={tw`bg-red-500 py-4 w-1/2 rounded-md mt-10`} onPress={handleDelete}>
+                <Text style={tw`text-white font-bold text-xl text-center`}>
+                    Delete
+                </Text>
+            </Pressable>
+        )
     }
 
     return (
@@ -171,6 +210,7 @@ export const AppointmentForm = observer(({ initialValues }: props) => {
                             </Text>
                         </Pressable>
                     )}
+                    {initialValues && renderDeleteButton()}
                 </View>
             </View>
         </ScrollView>

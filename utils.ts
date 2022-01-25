@@ -17,7 +17,7 @@ export const getTodaysDateModel = (): DateModel => {
         minute: today.getMinutes(),
         hour: today.getHours(),
         dayOfMonth: today.getDate(),
-        month: today.getMonth()
+        month: today.getMonth() + 1
     }
 }
 

@@ -9,15 +9,18 @@ class AppointmentStore {
     constructor() {
         makeObservable(this, {
             isLoading: observable,
-            createAppointment: action.bound,
-            updateAppointment: action.bound,
+            createAppointment: action,
+            updateAppointment: action,
+
+            isDeleteAppointmentLoading: observable,
+            deleteAppointment: action,
 
             appointments: observable,
             isAppointmentsLoading: observable,
-            loadAppointments: action.bound,
+            loadAppointments: action,
 
             selectedAppointment: observable,
-            setSelectedAppointment: action.bound
+            setSelectedAppointment: action
         })
     }
 
@@ -37,16 +40,32 @@ class AppointmentStore {
         this.loadAppointments()
     }
 
-    async updateAppointment(appointment: definitions['appointment']) {
+    async updateAppointment(id: number, appointment: definitions['appointment']) {
         runInAction(() => {
             this.isLoading = true
         })
-        const { error, status } = await supabase.from('appointment').update(appointment)
+        const { error, status } = await supabase.from('appointment').update(appointment).match({ id })
         if (error || status !== 200) {
             Alert.alert(error?.message || 'Error updating an appointment')
         }
         runInAction(() => {
             this.isLoading = false
+        })
+        this.loadAppointments()
+    }
+
+    isDeleteAppointmentLoading: boolean = false
+
+    async deleteAppointment(id: number) {
+        runInAction(() => {
+            this.isDeleteAppointmentLoading = true
+        })
+        const { error, status } = await supabase.from('appointment').delete().match({ id })
+        if (error || status !== 200) {
+            Alert.alert(error?.message || 'Error deleting an appointment')
+        }
+        runInAction(() => {
+            this.isDeleteAppointmentLoading = false
         })
         this.loadAppointments()
     }

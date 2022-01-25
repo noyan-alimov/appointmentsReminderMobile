@@ -1,7 +1,7 @@
 import { AppointmentForm } from '../components/AppointmentForm'
 
-export const AddAppointmentScreen = () => {
+export const AddAppointmentScreen = ({ navigation }: any) => {
     return (
-        <AppointmentForm />
+        <AppointmentForm navigation={navigation} />
     )
 }
