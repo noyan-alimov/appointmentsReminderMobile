@@ -1,6 +1,7 @@
 import { Session } from '@supabase/supabase-js'
 import { action, makeObservable, observable, runInAction } from 'mobx'
 import { Alert } from 'react-native'
+import { SignInSchema, SignUpSchema } from '../schemaValidation'
 import { supabase } from '../supabaseClient'
 
 class AuthStore {
@@ -45,7 +46,7 @@ class AuthStore {
         this.password = password
     }
 
-    session: Session = supabase.auth.session()
+    session: Session | null = supabase.auth.session()
     
     setSession(session: Session) {
         this.session = session
@@ -56,51 +57,63 @@ class AuthStore {
 
     async signUp() {
         try {
-            runInAction(() => {
-                this.isSignUpLoading = true
+            await SignUpSchema.parseAsync({
+                email: this.email,
+                password: this.password,
+                name: this.name,
+                phoneNumber: this.phoneNumber
             })
-            const { error, session } = await supabase.auth.signUp({ email: this.email, password: this.password }, {
-                data: {
-                    name: this.name,
-                    phoneNumber: this.phoneNumber
-                }
-            })
-            if (error || !session) {
-                Alert.alert(error.message || 'Error signing up')
-            } else {
-                runInAction(() => {
-                    this.session = session
-                })
-            }
         } catch (error) {
-            Alert.alert(error.message || 'Error signing up')
-        } finally {
+            Alert.alert('Invalid user input', (error as Error).message)
+            return
+        }
+
+        runInAction(() => {
+            this.isSignUpLoading = true
+        })
+        const { error, session } = await supabase.auth.signUp({ email: this.email, password: this.password }, {
+            data: {
+                name: this.name,
+                phoneNumber: this.phoneNumber
+            }
+        })
+        if (error || !session) {
+            Alert.alert(error?.message || 'Error signing up')
+        } else {
             runInAction(() => {
-                this.isSignUpLoading = false
+                this.session = session
             })
         }
+        runInAction(() => {
+            this.isSignUpLoading = false
+        })
     }
 
     async signIn() {
         try {
-            runInAction(() => {
-                this.isSignInLoading = true
+            await SignInSchema.parseAsync({
+                email: this.email,
+                password: this.password
             })
-            const { error, session } = await supabase.auth.signIn({ email: this.email, password: this.password })
-            if (error || !session) {
-                Alert.alert(error.message || 'Error signing in')
-            } else {
-                runInAction(() => {
-                    this.session = session
-                })
-            }
         } catch (error) {
-            Alert.alert(error.message || 'Error signing in')
-        } finally {
+            Alert.alert('Invalid user input', (error as Error).message)
+            return
+        }
+
+        runInAction(() => {
+            this.isSignInLoading = true
+        })
+        const { error, session } = await supabase.auth.signIn({ email: this.email, password: this.password })
+        if (error || !session) {
+            Alert.alert(error?.message || 'Error signing in')
+        } else {
             runInAction(() => {
-                this.isSignInLoading = false
+                this.session = session
             })
         }
+        runInAction(() => {
+            this.isSignInLoading = false
+        })
     }
 }
 

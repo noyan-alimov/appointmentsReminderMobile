@@ -3,7 +3,6 @@ import { FontAwesome } from '@expo/vector-icons'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 
 import { NotFoundScreen } from './screens/NotFoundScreen'
-import { View, Text } from 'react-native' // to be deleted
 import { NavigationContainer } from '@react-navigation/native'
 import { AddAppointmentScreen } from './screens/AddAppointmentScreen'
 import { AppointmentsScreen } from './screens/AppointmentsScreen'
@@ -17,8 +16,6 @@ export const Navigation = () => (
 )
 
 const Stack = createNativeStackNavigator()
-
-const todoScreen = () => <View><Text>TODO</Text></View> // to be deleted
 
 const RootNavigator = () => {
   return (
