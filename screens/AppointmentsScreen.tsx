@@ -2,15 +2,22 @@ import { View, Text, FlatList, ListRenderItemInfo, Pressable } from 'react-nativ
 import { FontAwesome } from '@expo/vector-icons'
 import { Appointment } from '../models'
 import tw from 'twrnc'
-import { appointments } from '../data'
 import { showDate } from '../utils'
+import { observer } from 'mobx-react-lite'
+import { appointmentStore } from '../stores/AppointmentStore'
+import { useEffect } from 'react'
 
-export const AppointmentsScreen = ({ navigation }) => {
+export const AppointmentsScreen = observer(({ navigation }: any) => {
+    useEffect(() => {
+        appointmentStore.loadAppointments()
+    }, [])
+
     const renderAppointment = ({ item }: ListRenderItemInfo<Appointment>) => {
         const { name, date, invitee } = item
         const { name: inviteeName } = invitee
 
         const openAppointmentModal = () => {
+            appointmentStore.setSelectedAppointment(item)
             navigation.navigate('Appointment')
         }
     
@@ -37,11 +44,11 @@ export const AppointmentsScreen = ({ navigation }) => {
 
     return (
         <FlatList
-            data={appointments}
+            data={appointmentStore.appointments}
             keyExtractor={appointment => appointment.id.toString()}
             renderItem={renderAppointment}
             style={tw`bg-green-50`}
         />
     )
-}
+})
 

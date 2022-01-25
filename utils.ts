@@ -1,8 +1,9 @@
-import { DateModel, ReminderPeriod, allAvailableRemindPeriods } from './models'
+import { DateModel, ReminderPeriod, allAvailableRemindPeriods, Appointment } from './models'
+import { definitions } from './types/supabase'
 
 export const parseDate = (date: Date) => ({
     dayOfMonth: date.getDate(),
-    month: date.getMonth()
+    month: date.getMonth() + 1
 })
 
 export const parseTime = (time: Date) => ({
@@ -26,13 +27,13 @@ export const showDate = (date: DateModel): string => {
     return `${formatDate(dayOfMonth)}/${formatDate(month)}/2022 ${formatDate(hour)}:${formatDate(minute)}`
 }
 
-const formatDate = (time: number): string => {
-    if (time < 10) return `0${time}`
-    return time.toString()
+const formatDate = (value: number): string => {
+    if (value < 10) return `0${value}`
+    return value.toString()
 }
 
 export const parseRemindPeriods = (remindPeriods: ReminderPeriod[]): any => {
-    const obj = {}
+    const obj: any = {}
 
     for (const remindPeriod of allAvailableRemindPeriods) {
         obj[remindPeriod] = false
@@ -43,4 +44,22 @@ export const parseRemindPeriods = (remindPeriods: ReminderPeriod[]): any => {
     }
 
     return obj
+}
+
+export const generateRemindPeriods = ({ add30mins, add1hour, add1day }: { add30mins: boolean, add1hour: boolean, add1day: boolean }): ReminderPeriod[] => {
+    const remindPeriods: ReminderPeriod[] = []
+    add30mins && remindPeriods.push('thirtyMins')
+    add1hour && remindPeriods.push('oneHour')
+    add1day && remindPeriods.push('oneDay')
+    return remindPeriods
+}
+
+export const parseAppointment = (appointment: definitions['appointment']): Appointment => {
+    return {
+        ...appointment,
+        id: appointment.id!,
+        date: JSON.parse(appointment.date),
+        requestor: JSON.parse(appointment.requestor),
+        invitee: JSON.parse(appointment.invitee),
+    }
 }

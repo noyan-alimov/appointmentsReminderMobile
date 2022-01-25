@@ -2,11 +2,12 @@ import { StatusBar } from 'expo-status-bar'
 import { observer } from 'mobx-react-lite'
 import { useEffect } from 'react'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
+import 'react-native-url-polyfill/auto'
 
 import useCachedResources from './hooks/useCachedResources'
 import { Navigation } from './navigation'
 import { SignInScreen } from './screens/SignInScreen'
-import { authStore } from './store/AuthStore'
+import { authStore } from './stores/AuthStore'
 import { supabase } from './supabaseClient'
 
 const App = observer(() => {
@@ -14,7 +15,7 @@ const App = observer(() => {
 
   useEffect(() => {
     const listener = supabase.auth.onAuthStateChange((_, session) => authStore.setSession(session))
-    return () => listener.data.unsubscribe()
+    return () => listener?.data?.unsubscribe()
   }, [])
 
   if (!isLoadingComplete) {

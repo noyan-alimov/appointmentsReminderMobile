@@ -48,7 +48,7 @@ class AuthStore {
 
     session: Session | null = supabase.auth.session()
     
-    setSession(session: Session) {
+    setSession(session: Session | null) {
         this.session = session
     }
 
@@ -74,7 +74,7 @@ class AuthStore {
         const { error, session } = await supabase.auth.signUp({ email: this.email, password: this.password }, {
             data: {
                 name: this.name,
-                phoneNumber: this.phoneNumber
+                phone_number: this.phoneNumber
             }
         })
         if (error || !session) {

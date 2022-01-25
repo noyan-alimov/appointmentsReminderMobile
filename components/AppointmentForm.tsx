@@ -1,19 +1,23 @@
 import { useState } from 'react'
-import { TextInput, View, Text, Switch, ScrollView, Alert, Pressable } from 'react-native'
+import { TextInput, View, Text, Switch, ScrollView, Pressable, ActivityIndicator } from 'react-native'
 import tw from 'twrnc'
 import DateTimePicker from '@react-native-community/datetimepicker'
-import { getTodaysDateModel, parseDate, parseRemindPeriods, parseTime } from '../utils'
+import { generateRemindPeriods, getTodaysDateModel, parseDate, parseRemindPeriods, parseTime } from '../utils'
 import { Appointment, DateModel } from '../models'
 import { useEffect } from 'react'
+import { appointmentStore } from '../stores/AppointmentStore'
+import { authStore } from '../stores/AuthStore'
+import { supabase } from '../supabaseClient'
+import { observer } from 'mobx-react-lite'
 
 interface props {
     initialValues?: Appointment
 }
 
-export const AppointmentForm: React.FC<props> = ({ initialValues }) => {
+export const AppointmentForm = observer(({ initialValues }: props) => {
     const [name, setName] = useState(initialValues?.name || '')
     const [inviteeName, setInviteeName] = useState(initialValues?.invitee?.name || '')
-    const [inviteePhoneNumber, setInviteePhoneNumber] = useState(initialValues?.invitee.phone_number || '')
+    const [inviteePhoneNumber, setInviteePhoneNumber] = useState(initialValues?.invitee.phoneNumber || '')
     const [dateModel, setDateModel] = useState<DateModel>(initialValues?.date || getTodaysDateModel())
 
     const inviteeRemindPeriods = parseRemindPeriods(initialValues?.invitee_reminder_periods || [])
@@ -38,8 +42,31 @@ export const AppointmentForm: React.FC<props> = ({ initialValues }) => {
         }
     }, [sameAsInvitee])
 
-    const addAppointment = () => {
-        Alert.alert('Added')
+    const handleAppointmentPress = () => {
+        const user = supabase.auth.user()
+        if (!user) {
+            authStore.setSession(null)
+            return
+        }
+
+        const appointment = {
+            user_id: user.id,
+            name,
+            date: JSON.stringify(dateModel),
+            requestor: JSON.stringify(user.user_metadata),
+            invitee: JSON.stringify({ name: inviteeName, phoneNumber: inviteePhoneNumber }),
+            requestor_reminder_periods: generateRemindPeriods({ add30mins, add1hour, add1day }),
+            invitee_reminder_periods: generateRemindPeriods({ add30mins: add30minsRequestor, add1hour: add1hourRequestor, add1day: add1dayRequestor })
+        }
+
+        if (initialValues) {
+            appointmentStore.updateAppointment({
+                ...appointment,
+                id: initialValues.id
+            })
+        } else {
+            appointmentStore.createAppointment(appointment)
+        }
     }
 
     return (
@@ -135,31 +162,35 @@ export const AppointmentForm: React.FC<props> = ({ initialValues }) => {
                 </View>
 
                 <View style={tw`mb-10 w-full items-center`}>
-                    <Pressable style={tw`bg-black py-4 w-1/2 rounded-md`} onPress={addAppointment}>
-                        <Text style={tw`text-white font-bold text-xl text-center`}>
-                            {initialValues ? 'Save' : 'Add'}
-                        </Text>
-                    </Pressable>
+                    {appointmentStore.isLoading ? (
+                        <ActivityIndicator size='large' />
+                    ) : (
+                        <Pressable style={tw`bg-black py-4 w-1/2 rounded-md`} onPress={handleAppointmentPress}>
+                            <Text style={tw`text-white font-bold text-xl text-center`}>
+                                {initialValues ? 'Save' : 'Add'}
+                            </Text>
+                        </Pressable>
+                    )}
                 </View>
             </View>
         </ScrollView>
     )
-}
+})
 
 const CustomDateTimePicker = ({ dateModel, onChange }: { dateModel: DateModel, onChange: (dateModel: DateModel) => void }) => {
     const [date, setDate] = useState(new Date())
-    const onDateChange = (_, selectedDate) => {
+    const onDateChange = (_: any, selectedDate: Date | undefined) => {
         const currentDate = selectedDate || date
         setDate(currentDate)
-        const parsedDate = parseDate(date)
+        const parsedDate = parseDate(currentDate)
         onChange({ ...dateModel, ...parsedDate })
     }
 
     const [time, setTime] = useState(new Date())
-    const onTimeChange = (_, selectedDate) => {
+    const onTimeChange = (_: any, selectedDate: Date | undefined) => {
         const currentDate = selectedDate || time
         setTime(currentDate)
-        const parsedTime = parseTime(time)
+        const parsedTime = parseTime(currentDate)
         onChange({ ...dateModel, ...parsedTime })
     }
 

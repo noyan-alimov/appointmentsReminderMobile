@@ -2,8 +2,8 @@ export interface Appointment {
     id: number
     name: string // dentist, business meeting
     date: DateModel
-    requestor: User // person who scheduled an apoointment
-    invitee: User
+    requestor: UserModel // person who scheduled an apoointment
+    invitee: UserModel
     requestor_reminder_periods: ReminderPeriod[] // When to remind a requestor
     invitee_reminder_periods: ReminderPeriod[] // When to remind an invitee
 }
@@ -15,9 +15,9 @@ export interface DateModel {
     month: number
 }
 
-export interface User {
+export interface UserModel {
     name: string
-    phone_number: string
+    phoneNumber: string
 }
 
 // When to remind about the appointment (before 30 minutes, etc...)

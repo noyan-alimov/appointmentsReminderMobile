@@ -4,7 +4,7 @@ import { observer } from 'mobx-react-lite'
 import { View, TextInput, Text, Pressable, Button, ActivityIndicator } from 'react-native'
 import tw from 'twrnc'
 
-import { authStore } from '../store/AuthStore'
+import { authStore } from '../stores/AuthStore'
 
 const Stack = createNativeStackNavigator()
 
