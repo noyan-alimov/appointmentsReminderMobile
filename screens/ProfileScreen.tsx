@@ -1,13 +1,17 @@
+import { observer } from 'mobx-react-lite'
 import { useState } from 'react'
-import { View, TextInput, Pressable, Text } from 'react-native'
+import { View, TextInput, Pressable, Text, ActivityIndicator } from 'react-native'
 import tw from 'twrnc'
+import { authStore } from '../stores/AuthStore'
 
-export const ProfileScreen = () => {
-    const [name, setName] = useState('')
-    const [phoneNumber, setPhoneNumber] = useState('')
+export const ProfileScreen = observer(() => {
+    const userMetadata = authStore.session?.user?.user_metadata
+
+    const [name, setName] = useState(userMetadata?.name || '')
+    const [phoneNumber, setPhoneNumber] = useState(userMetadata?.phoneNumber || '')
 
     const saveProfile = () => {
-
+        authStore.editUserMetadata(name, phoneNumber)
     }
 
     return (
@@ -27,10 +31,14 @@ export const ProfileScreen = () => {
                 />
             </View>
             <View style={tw`pt-20 w-full items-center`}>
-                <Pressable style={tw`bg-black py-4 w-1/2 rounded-md`} onPress={saveProfile}>
-                    <Text style={tw`text-white font-bold text-xl text-center`}>Save</Text>
-                </Pressable>
+                {authStore.isUpdateUserMetadataLoading ? (
+                    <ActivityIndicator size='large' />
+                ) : (
+                    <Pressable style={tw`bg-black py-4 w-1/2 rounded-md`} onPress={saveProfile}>
+                        <Text style={tw`text-white font-bold text-xl text-center`}>Save</Text>
+                    </Pressable>
+                )}
             </View>
         </View>
     )
-}
+})

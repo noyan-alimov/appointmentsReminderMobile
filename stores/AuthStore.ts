@@ -21,7 +21,10 @@ class AuthStore {
             isSignInLoading: observable,
             isSignUpLoading: observable,
             signUp: action.bound,
-            signIn: action.bound
+            signIn: action.bound,
+
+            isUpdateUserMetadataLoading: observable,
+            editUserMetadata: action
         })
     }
 
@@ -113,6 +116,21 @@ class AuthStore {
         }
         runInAction(() => {
             this.isSignInLoading = false
+        })
+    }
+
+    isUpdateUserMetadataLoading: boolean = false
+
+    async editUserMetadata(name: string, phoneNumber: string) {
+        runInAction(() => {
+            this.isUpdateUserMetadataLoading = true
+        })
+        const { error } = await supabase.auth.update({ data: { name, phoneNumber } })
+        if (error) {
+            Alert.alert(error.message || 'Error updating user metadata')
+        }
+        runInAction(() => {
+            this.isUpdateUserMetadataLoading = false
         })
     }
 }
