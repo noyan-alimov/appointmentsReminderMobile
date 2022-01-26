@@ -5,6 +5,7 @@ import { View, TextInput, Text, Pressable, Button, ActivityIndicator } from 'rea
 import tw from 'twrnc'
 
 import { authStore } from '../stores/AuthStore'
+import { TimezoneSelect } from '../components/TimezoneSelect'
 
 const Stack = createNativeStackNavigator()
 
@@ -92,6 +93,7 @@ const SignUp = observer(() => {
                     secureTextEntry
                     style={tw`border-b border-gray-400 p-2 text-base`}
                 />
+                <TimezoneSelect value={authStore.timezone} handleTimezoneChange={authStore.setTimezone} />
                 <View style={tw`mt-20 w-full items-center`}>
                     {authStore.isSignUpLoading ? (
                         <ActivityIndicator size='large' />

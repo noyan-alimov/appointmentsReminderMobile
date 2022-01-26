@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { TextInput, View, Text, Switch, ScrollView, Pressable, ActivityIndicator } from 'react-native'
+import { TextInput, View, Text, Switch, ScrollView, Pressable, ActivityIndicator, Alert } from 'react-native'
 import tw from 'twrnc'
 import DateTimePicker from '@react-native-community/datetimepicker'
 import { convertFromDateModelToJSDate, generateRemindPeriods, getTodaysDateModel, parseDate, parseRemindPeriods, parseTime } from '../utils'
@@ -9,6 +9,7 @@ import { appointmentStore } from '../stores/AppointmentStore'
 import { authStore } from '../stores/AuthStore'
 import { supabase } from '../supabaseClient'
 import { observer } from 'mobx-react-lite'
+import { AppointmentSchema } from '../schemaValidation'
 
 interface props {
     navigation: any
@@ -72,14 +73,37 @@ export const AppointmentForm = observer(({ navigation, initialValues }: props) =
             return
         }
 
+        const invitee_reminder_periods = generateRemindPeriods({ add30mins, add1hour, add1day })
+        const requestor_reminder_periods = generateRemindPeriods({ add30mins: add30minsRequestor, add1hour: add1hourRequestor, add1day: add1dayRequestor })
+
+        try {
+            AppointmentSchema.parse({
+                name,
+                dateModel,
+                requestor: {
+                    name: user.user_metadata.name,
+                    phoneNumber: user.user_metadata.phoneNumber
+                },
+                invitee: {
+                    name: inviteeName,
+                    phoneNumber: inviteePhoneNumber
+                },
+                requestor_reminder_periods,
+                invitee_reminder_periods
+            })
+        } catch (error) {
+            Alert.alert('Invalid inputs', (error as Error).message)
+            return
+        }
+
         const appointment = {
             user_id: user.id,
             name,
             date: JSON.stringify(dateModel),
             invitee: JSON.stringify({ name: inviteeName, phoneNumber: inviteePhoneNumber }),
-            invitee_reminder_periods: generateRemindPeriods({ add30mins, add1hour, add1day }),
+            invitee_reminder_periods,
             requestor: JSON.stringify(user.user_metadata),
-            requestor_reminder_periods: generateRemindPeriods({ add30mins: add30minsRequestor, add1hour: add1hourRequestor, add1day: add1dayRequestor })
+            requestor_reminder_periods
         }
 
         if (initialValues) {

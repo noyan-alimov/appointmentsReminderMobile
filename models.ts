@@ -23,3 +23,6 @@ export interface UserModel {
 // When to remind about the appointment (before 30 minutes, etc...)
 export type ReminderPeriod = 'thirtyMins' | 'oneHour' | 'oneDay'
 export const allAvailableRemindPeriods: ReminderPeriod[] = ['thirtyMins', 'oneHour', 'oneDay']
+
+export type TimezoneType = 'Europe/London' | 'Asia/Almaty'
+export const allTimezones: TimezoneType[] = ['Europe/London', 'Asia/Almaty']

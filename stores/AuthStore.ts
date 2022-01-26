@@ -1,6 +1,7 @@
 import { Session } from '@supabase/supabase-js'
 import { action, makeObservable, observable, runInAction } from 'mobx'
 import { Alert } from 'react-native'
+import { TimezoneType } from '../models'
 import { SignInSchema, SignUpSchema } from '../schemaValidation'
 import { supabase } from '../supabaseClient'
 
@@ -9,10 +10,12 @@ class AuthStore {
         makeObservable(this, {
             name: observable,
             phoneNumber: observable,
+            timezone: observable,
             email: observable,
             password: observable,
             setName: action.bound,
             setPhoneNumber: action.bound,
+            setTimezone: action.bound,
             setEmail: action.bound,
             setPassword: action.bound,
 
@@ -24,12 +27,16 @@ class AuthStore {
             signIn: action.bound,
 
             isUpdateUserMetadataLoading: observable,
-            editUserMetadata: action
+            editUserMetadata: action,
+
+            isSignOutLoading: observable,
+            signOut: action.bound
         })
     }
 
     name: string = ''
     phoneNumber: string = ''
+    timezone: TimezoneType | null = null
     email: string = ''
     password: string = ''
 
@@ -39,6 +46,10 @@ class AuthStore {
 
     setPhoneNumber(phoneNumber: string) {
         this.phoneNumber = phoneNumber
+    }
+
+    setTimezone(timezone: TimezoneType) {
+        this.timezone = timezone
     }
 
     setEmail(email: string) {
@@ -64,7 +75,8 @@ class AuthStore {
                 email: this.email,
                 password: this.password,
                 name: this.name,
-                phoneNumber: this.phoneNumber
+                phoneNumber: this.phoneNumber,
+                timezone: this.timezone
             })
         } catch (error) {
             Alert.alert('Invalid user input', (error as Error).message)
@@ -77,7 +89,8 @@ class AuthStore {
         const { error, session } = await supabase.auth.signUp({ email: this.email, password: this.password }, {
             data: {
                 name: this.name,
-                phone_number: this.phoneNumber
+                phoneNumber: this.phoneNumber,
+                timezone: this.timezone
             }
         })
         if (error || !session) {
@@ -121,16 +134,29 @@ class AuthStore {
 
     isUpdateUserMetadataLoading: boolean = false
 
-    async editUserMetadata(name: string, phoneNumber: string) {
+    async editUserMetadata(name: string, phoneNumber: string, timezone: TimezoneType) {
         runInAction(() => {
             this.isUpdateUserMetadataLoading = true
         })
-        const { error } = await supabase.auth.update({ data: { name, phoneNumber } })
+        const { error } = await supabase.auth.update({ data: { name, phoneNumber, timezone } })
         if (error) {
             Alert.alert(error.message || 'Error updating user metadata')
         }
+        Alert.alert('Saved Profile successfully')
         runInAction(() => {
             this.isUpdateUserMetadataLoading = false
+        })
+    }
+
+    isSignOutLoading: boolean = false
+
+    async signOut() {
+        runInAction(() => {
+            this.isSignOutLoading = true
+        })
+        await supabase.auth.signOut()
+        runInAction(() => {
+            this.isSignOutLoading = false
         })
     }
 }
