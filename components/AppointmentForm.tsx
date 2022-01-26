@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { TextInput, View, Text, Switch, ScrollView, Pressable, ActivityIndicator } from 'react-native'
 import tw from 'twrnc'
 import DateTimePicker from '@react-native-community/datetimepicker'
-import { generateRemindPeriods, getTodaysDateModel, parseDate, parseRemindPeriods, parseTime } from '../utils'
+import { convertFromDateModelToJSDate, generateRemindPeriods, getTodaysDateModel, parseDate, parseRemindPeriods, parseTime } from '../utils'
 import { Appointment, DateModel } from '../models'
 import { useEffect } from 'react'
 import { appointmentStore } from '../stores/AppointmentStore'
@@ -218,7 +218,7 @@ export const AppointmentForm = observer(({ navigation, initialValues }: props) =
 })
 
 const CustomDateTimePicker = ({ dateModel, onChange }: { dateModel: DateModel, onChange: (dateModel: DateModel) => void }) => {
-    const [date, setDate] = useState(new Date())
+    const [date, setDate] = useState(convertFromDateModelToJSDate(dateModel))
     const onDateChange = (_: any, selectedDate: Date | undefined) => {
         const currentDate = selectedDate || date
         setDate(currentDate)
@@ -226,7 +226,7 @@ const CustomDateTimePicker = ({ dateModel, onChange }: { dateModel: DateModel, o
         onChange({ ...dateModel, ...parsedDate })
     }
 
-    const [time, setTime] = useState(new Date())
+    const [time, setTime] = useState(convertFromDateModelToJSDate(dateModel))
     const onTimeChange = (_: any, selectedDate: Date | undefined) => {
         const currentDate = selectedDate || time
         setTime(currentDate)

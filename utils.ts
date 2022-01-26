@@ -63,3 +63,7 @@ export const parseAppointment = (appointment: definitions['appointment']): Appoi
         invitee: JSON.parse(appointment.invitee),
     }
 }
+
+export const convertFromDateModelToJSDate = (dateModel: DateModel): Date => {
+    return new Date(`2022-${formatDate(dateModel.month)}-${formatDate(dateModel.dayOfMonth)}T${formatDate(dateModel.hour)}:${formatDate(dateModel.minute)}:00`)
+}
