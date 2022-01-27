@@ -10,6 +10,7 @@ import { authStore } from '../stores/AuthStore'
 import { supabase } from '../supabaseClient'
 import { observer } from 'mobx-react-lite'
 import { AppointmentSchema } from '../schemaValidation'
+import { definitions } from '../types/supabase'
 
 interface props {
     navigation: any
@@ -96,14 +97,15 @@ export const AppointmentForm = observer(({ navigation, initialValues }: props) =
             return
         }
 
-        const appointment = {
+        const appointment: definitions['appointment'] = {
             user_id: user.id,
             name,
             date: JSON.stringify(dateModel),
             invitee: JSON.stringify({ name: inviteeName, phoneNumber: inviteePhoneNumber }),
             invitee_reminder_periods,
             requestor: JSON.stringify(user.user_metadata),
-            requestor_reminder_periods
+            requestor_reminder_periods,
+            timezone: user.user_metadata.timezone
         }
 
         if (initialValues) {

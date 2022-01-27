@@ -3,7 +3,7 @@
  * Do not make direct changes to the file.
  */
 
-import { ReminderPeriod } from '../models'
+import { ReminderPeriod, TimezoneType } from '../models'
 
 export interface paths {
   "/": {
@@ -154,6 +154,8 @@ export interface definitions {
     invitee_reminder_periods: ReminderPeriod[];
     /** Format: ARRAY */
     requestor_reminder_periods: ReminderPeriod[];
+    /** Format: text */
+    timezone: TimezoneType;
   };
 }
 

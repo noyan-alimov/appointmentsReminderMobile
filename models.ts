@@ -6,6 +6,7 @@ export interface Appointment {
     invitee: UserModel
     requestor_reminder_periods: ReminderPeriod[] // When to remind a requestor
     invitee_reminder_periods: ReminderPeriod[] // When to remind an invitee
+    timezone: TimezoneType
 }
 
 export interface DateModel {

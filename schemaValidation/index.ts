@@ -28,5 +28,6 @@ export const AppointmentSchema = z.object({
         phoneNumber: z.string().min(4)
     }),
     requestor_reminder_periods: z.array(z.string()).nonempty(),
-    invitee_reminder_periods: z.array(z.string()).nonempty()
+    invitee_reminder_periods: z.array(z.string()).nonempty(),
+    timezone: z.string().min(4)
 })
