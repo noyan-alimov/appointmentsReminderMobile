@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { TextInput, View, Text, Switch, ScrollView, Pressable, ActivityIndicator, Alert } from 'react-native'
 import tw from 'twrnc'
 import DateTimePicker from '@react-native-community/datetimepicker'
-import { convertFromDateModelToJSDate, generateRemindPeriods, getTodaysDateModel, parseDate, parseRemindPeriods, parseTime } from '../utils'
+import { convertFromDateModelToJSDate, generateRemindPeriods, getTodaysDateModel, parseDate, parsePhoneNumber, parseRemindPeriods, parseTime, validatePhoneNumber } from '../utils'
 import { Appointment, DateModel } from '../models'
 import { useEffect } from 'react'
 import { appointmentStore } from '../stores/AppointmentStore'
@@ -76,8 +76,10 @@ export const AppointmentForm = observer(({ navigation, initialValues }: props) =
 
         const invitee_reminder_periods = generateRemindPeriods({ add30mins, add1hour, add1day })
         const requestor_reminder_periods = generateRemindPeriods({ add30mins: add30minsRequestor, add1hour: add1hourRequestor, add1day: add1dayRequestor })
+        const parsedInviteePhoneNumber = parsePhoneNumber(inviteePhoneNumber)
 
         try {
+            validatePhoneNumber(parsedInviteePhoneNumber)
             AppointmentSchema.parse({
                 name,
                 dateModel,
@@ -87,7 +89,7 @@ export const AppointmentForm = observer(({ navigation, initialValues }: props) =
                 },
                 invitee: {
                     name: inviteeName,
-                    phoneNumber: inviteePhoneNumber
+                    phoneNumber: parsedInviteePhoneNumber
                 },
                 requestor_reminder_periods,
                 invitee_reminder_periods
@@ -101,7 +103,7 @@ export const AppointmentForm = observer(({ navigation, initialValues }: props) =
             user_id: user.id,
             name,
             date: JSON.stringify(dateModel),
-            invitee: JSON.stringify({ name: inviteeName, phoneNumber: inviteePhoneNumber }),
+            invitee: JSON.stringify({ name: inviteeName, phoneNumber: parsedInviteePhoneNumber }),
             invitee_reminder_periods,
             requestor: JSON.stringify(user.user_metadata),
             requestor_reminder_periods,

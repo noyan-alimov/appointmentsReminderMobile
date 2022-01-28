@@ -1,10 +1,11 @@
 import { observer } from 'mobx-react-lite'
 import { useState } from 'react'
-import { View, TextInput, Pressable, Text, ActivityIndicator } from 'react-native'
+import { View, TextInput, Pressable, Text, ActivityIndicator, Alert } from 'react-native'
 import tw from 'twrnc'
 import { TimezoneSelect } from '../components/TimezoneSelect'
 import { TimezoneType } from '../models'
 import { authStore } from '../stores/AuthStore'
+import { parsePhoneNumber, validatePhoneNumber } from '../utils'
 
 export const ProfileScreen = observer(() => {
     const userMetadata = authStore.session?.user?.user_metadata
@@ -14,6 +15,13 @@ export const ProfileScreen = observer(() => {
     const [timezone, setTimezone] = useState<TimezoneType>(userMetadata?.timezone || null)
 
     const saveProfile = () => {
+        const parsedPhoneNumber = parsePhoneNumber(phoneNumber)
+        try {
+            validatePhoneNumber(parsedPhoneNumber)
+        } catch (error) {
+            Alert.alert('Invalid phone number')
+            return
+        }
         authStore.editUserMetadata(name, phoneNumber, timezone)
     }
 

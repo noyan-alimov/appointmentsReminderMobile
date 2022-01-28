@@ -67,3 +67,10 @@ export const parseAppointment = (appointment: definitions['appointment']): Appoi
 export const convertFromDateModelToJSDate = (dateModel: DateModel): Date => {
     return new Date(`2022-${formatDate(dateModel.month)}-${formatDate(dateModel.dayOfMonth)}T${formatDate(dateModel.hour)}:${formatDate(dateModel.minute)}:00`)
 }
+
+export const parsePhoneNumber = (phoneNumber: string): string => phoneNumber.replace(/ |[(\[]|[)\]]/g,'')
+
+export const validatePhoneNumber = (phoneNumber: string) => {
+    const number = Number(phoneNumber)
+    if (typeof number !== 'number') throw new Error('Invalid phone number')
+}

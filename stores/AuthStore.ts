@@ -4,6 +4,7 @@ import { Alert } from 'react-native'
 import { TimezoneType } from '../models'
 import { SignInSchema, SignUpSchema } from '../schemaValidation'
 import { supabase } from '../supabaseClient'
+import { parsePhoneNumber, validatePhoneNumber } from '../utils'
 
 class AuthStore {
     constructor() {
@@ -70,12 +71,14 @@ class AuthStore {
     isSignUpLoading: boolean = false
 
     async signUp() {
+        const parsedPhoneNumber = parsePhoneNumber(this.phoneNumber)
         try {
-            await SignUpSchema.parseAsync({
+            validatePhoneNumber(parsedPhoneNumber)
+            SignUpSchema.parse({
                 email: this.email,
                 password: this.password,
                 name: this.name,
-                phoneNumber: this.phoneNumber,
+                phoneNumber: parsedPhoneNumber,
                 timezone: this.timezone
             })
         } catch (error) {
@@ -89,7 +92,7 @@ class AuthStore {
         const { error, session } = await supabase.auth.signUp({ email: this.email, password: this.password }, {
             data: {
                 name: this.name,
-                phoneNumber: this.phoneNumber,
+                phoneNumber: parsedPhoneNumber,
                 timezone: this.timezone
             }
         })
