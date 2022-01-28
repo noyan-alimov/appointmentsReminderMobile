@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { TextInput, View, Text, Switch, ScrollView, Pressable, ActivityIndicator, Alert } from 'react-native'
 import tw from 'twrnc'
 import DateTimePicker from '@react-native-community/datetimepicker'
@@ -11,6 +11,7 @@ import { supabase } from '../supabaseClient'
 import { observer } from 'mobx-react-lite'
 import { AppointmentSchema } from '../schemaValidation'
 import { definitions } from '../types/supabase'
+import dayjs from 'dayjs'
 
 interface props {
     navigation: any
@@ -136,6 +137,11 @@ export const AppointmentForm = observer(({ navigation, initialValues }: props) =
         )
     }
 
+    const dayjsDateModel = useMemo(() => dayjs(convertFromDateModelToJSDate(dateModel)), [dateModel])
+    const isAdd30minsDisabled = useMemo(() => dayjsDateModel.subtract(30, 'minute').isBefore(dayjs()), [dayjsDateModel])
+    const isAdd1hourDisabled = useMemo(() => dayjsDateModel.subtract(1, 'hour').isBefore(dayjs()), [dayjsDateModel])
+    const isAdd1dayDisabled = useMemo(() => dayjsDateModel.subtract(1, 'day').isBefore(dayjs()), [dayjsDateModel])
+
     return (
         <ScrollView>
             <View style={tw`items-center pt-6 bg-green-50`}>
@@ -177,6 +183,7 @@ export const AppointmentForm = observer(({ navigation, initialValues }: props) =
                         <Switch
                             value={add30mins}
                             onValueChange={setAdd30mins}
+                            disabled={isAdd30minsDisabled}
                         />
                     </View>
                     <View style={tw`flex-row items-center justify-between w-1/2 my-4`}>
@@ -184,6 +191,7 @@ export const AppointmentForm = observer(({ navigation, initialValues }: props) =
                         <Switch
                             value={add1hour}
                             onValueChange={setAdd1hour}
+                            disabled={isAdd1hourDisabled}
                         />
                     </View>
                     <View style={tw`flex-row items-center justify-between w-1/2`}>
@@ -191,6 +199,7 @@ export const AppointmentForm = observer(({ navigation, initialValues }: props) =
                         <Switch
                             value={add1day}
                             onValueChange={setAdd1day}
+                            disabled={isAdd1dayDisabled}
                         />
                     </View>
                 </View>
@@ -210,6 +219,7 @@ export const AppointmentForm = observer(({ navigation, initialValues }: props) =
                         <Switch
                             value={add30minsRequestor}
                             onValueChange={setAdd30minsRequestor}
+                            disabled={isAdd30minsDisabled}
                         />
                     </View>
                     <View style={tw`flex-row items-center justify-between w-1/2 my-4`}>
@@ -217,6 +227,7 @@ export const AppointmentForm = observer(({ navigation, initialValues }: props) =
                         <Switch
                             value={add1hourRequestor}
                             onValueChange={setAdd1hourRequestor}
+                            disabled={isAdd1hourDisabled}
                         />
                     </View>
                     <View style={tw`flex-row items-center justify-between w-1/2`}>
@@ -224,6 +235,7 @@ export const AppointmentForm = observer(({ navigation, initialValues }: props) =
                         <Switch
                             value={add1dayRequestor}
                             onValueChange={setAdd1dayRequestor}
+                            disabled={isAdd1dayDisabled}
                         />
                     </View>
                 </View>
@@ -269,6 +281,7 @@ const CustomDateTimePicker = ({ dateModel, onChange }: { dateModel: DateModel, o
                 value={date}
                 mode={'date'}
                 onChange={onDateChange}
+                minimumDate={new Date()}
             />
             <DateTimePicker
                 value={time}
